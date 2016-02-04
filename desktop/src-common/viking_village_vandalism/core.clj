@@ -1,6 +1,7 @@
 (ns viking-village-vandalism.core
   (:require [play-clj.core :refer :all]
-            [play-clj.ui :refer :all]))
+            [play-clj.g2d :refer :all]
+            [clojure.test :refer [is]]))
 
 ;; ===============================
 ;; Constants:
@@ -59,18 +60,55 @@
 ;; ===============================
 ;; Function Definitions:
 
-(defscreen main-screen
-  :on-show
-  (fn [screen entities]
-    (update! screen :renderer (stage))
-    (label "Hello world!" (color :white)))
+(declare on-show on-render on-timer on-key-down on-begin-contact)
 
-  :on-render
-  (fn [screen entities]
-    (clear!)
-    (render! screen entities)))
+(defscreen main-screen
+  :on-show on-show!
+  :on-render on-render
+  :on-timer on-timer
+  :on-key-down on-key-down
+  :on-begin-contact on-begin-contact)
 
 (defgame viking-village-vandalism-game
   :on-create
   (fn [this]
     (set-screen! this main-screen)))
+
+;; Screen Entities -> Entities
+;; initialize screen rendering and produce initial world state
+;; !!! not testing this for now, as side-effects of `update!` are a PITA
+(defn on-show! [screen entities]
+  (update! screen :renderer (stage))
+  entities)
+
+;; Screen Entities -> Entities
+;; update world state and render entities, produce updated entities
+(defn on-render [screen entities]
+  (clear!)
+  (->> entities
+       update-entities
+       (render! screen)))
+
+;; Entities -> Entities
+;; produce an updated world state
+;; !!!
+(defn update-entities [entities]
+  entities)
+
+;; Screen Entities -> Entities
+;; produce updated world state on timed events
+;; !!!
+(defn on-timer [screen entities]
+  entities)
+
+;; Screen Entities -> Entities
+;; produce updated world state on key inputs
+;; !!!
+(defn on-key-down [screen entities]
+  entities)
+
+;; Screen Entities -> Entities
+;; produce updated world state on collision of entities
+;; !!!
+(defn on-begin-contact [screen entities]
+  entities)
