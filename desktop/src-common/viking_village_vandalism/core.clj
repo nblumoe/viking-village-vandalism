@@ -123,15 +123,17 @@
   (->> entities
        (map (fn [entity]
               (cond (:player? entity)
-                    (-> entity
-                        (update :y #(if (<= (+ % (:y-velocity entity)) floor-y)
-                                      floor-y
-                                      (+ % (:y-velocity entity))))
-                        (update :y-velocity #(if (<= (:y entity) floor-y)
-                                               0
-                                               (+ % gravity)))
-                        (assoc :can-jump? (<= (:y entity) floor-y))
-                        (merge (get-in entity [:images (:current-image entity)])))
+                    (let [new-y (+ (:y entity) (:y-velocity entity))]
+                      (-> entity
+                          (assoc :y (max new-y floor-y))
+                          (update :y-velocity #(if (<= (:y entity) floor-y)
+                                                 0
+                                                 (+ % gravity)))
+                          (assoc :can-jump? (<= (:y entity) floor-y))
+                          (update :current-image #(if (<= new-y floor-y)
+                                                    :running
+                                                    %))
+                          (merge (get-in entity [:images (:current-image entity)]))))
 
                     (:background? entity)
                     (if (< (:x entity) (- (/ (g2d/texture! entity :get-region-width) 2)))
@@ -146,8 +148,7 @@
 
                     :else entity)))
        (remove nil?)
-       vec
-       ))
+       vec))
 
 ;; Entities !-> Entities
 ;; render entities, returns the original entities
@@ -178,7 +179,9 @@
     (->> entities
          (map (fn [entity]
                 (if (and (:player? entity) (:can-jump? entity))
-                  (assoc entity :y-velocity player-max-y-velocity)
+                  (-> entity
+                      (assoc :y-velocity player-max-y-velocity
+                             :current-image :jumping))
                   entity))))
     entities))
 
