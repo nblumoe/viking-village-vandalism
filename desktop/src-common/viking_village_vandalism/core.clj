@@ -78,21 +78,7 @@
 
 ;; Screen Entities -> Entities
 ;; initialize screen rendering and create background and player entities
-;; !!! this does not compile on initial CIDER connect, but can be used once started
-#_(with-redefs [init-screen! (fn [_] :screen-stub)
-                g2d/texture* (fn [filename] {:texture-loaded filename})]
-    (let [entities    (on-show! nil nil)
-          players     (filter (partial instance? Player) entities)
-          obstacles   (filter :obstacle? entities)]
-      (is (= (count players) 1)     "only a single player gets added")
-      (is (= (count obstacles) 0)   "no obstacles created on start")
-      (is (= (first players)
-             (map->Player
-              {:dy            0               ; starts on the floor
-               :health        initial-health  ; initial health
-               :score         0               ; initial score
-               :current-image :running        ; start as running
-               })) "player initialized with correct values")))
+;; !! add tests again
 
 (defn on-show! [screen _]
   (init-screen! screen)
