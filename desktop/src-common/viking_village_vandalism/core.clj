@@ -34,7 +34,8 @@
 (def player-kick-duration 1)   ; in seconds
 (def player-slide-duration 1)  ; in seconds
 (def player-speed 5)
-(def player-jump-height (* arrow-y 1.5))
+(def player-max-y-velocity 150)
+(def gravity -0.5)
 
 ;; ===============================
 ;; Data Definitions:
@@ -75,39 +76,6 @@
 (defn on-resize [screen entities]
   (play-clj/height! screen 600))
 
-;; the main game screen
-(play-clj/defscreen main-screen
-  :on-show on-show!                   ; Screen Entities -> Entities
-  :on-render on-render                ; Screen Entities -> Entities
-  :on-timer on-timer                  ; Screen Entities -> Entities
-  :on-key-down on-key-down            ; Screen Entities -> Entities
-  :on-begin-contact on-begin-contact  ; Screen Entities -> Entities
-  :on-resize on-resize)
-
-;; the UI overlay for the main game screen
-;; !!!
-(play-clj/defscreen ui-screen
-  :on-show
-  (fn [screen entities]
-    (play-clj/update! screen :camera (play-clj/orthographic) :renderer (play-clj/stage))
-    (merge (ui/label "0" (play-clj/color :black))
-           {:id :fps
-            :x 10
-            :y 10}))
-  :on-resize on-resize
-  :on-render
-  (fn [screen entities]
-    (->> (for [entity entities]
-           (case (:id entity)
-             :fps (doto entity (ui/label! :set-text (str (play-clj/graphics! :get-frames-per-second) "fps")))
-             entity))
-         (play-clj/render! screen))))
-
-(play-clj/defgame viking-village-vandalism-game
-  :on-create
-  (fn [this]
-    (play-clj/set-screen! this main-screen ui-screen)))
-
 ;; Screen Entities -> Entities
 ;; initialize screen rendering and create background and player entities
 ;; !!! this does not compile on initial CIDER connect, but can be used once started
@@ -133,6 +101,8 @@
            :x 0})
    (merge (g2d/texture (get player-images :running))
           {:player? true
+           :y-velocity 0
+           :can-jump? true
            :x player-x
            :y floor-y
            :images (reduce-kv #(assoc %1 %2 (g2d/texture %3)) {} player-images)}
@@ -167,8 +137,15 @@
   (->> entities
        (map (fn [entity]
               (cond (:player? entity)
-                    (merge entity
-                           (get-in entity [:images (:current-image entity)]))
+                    (-> entity
+                        (update :y #(if (<= (+ % (:y-velocity entity)) floor-y)
+                                      floor-y
+                                      (+ % (:y-velocity entity))))
+                        (update :y-velocity #(if (<= (:y entity) floor-y)
+                                               0
+                                               (+ % gravity)))
+                        (assoc :can-jump? (<= (:y entity) floor-y))
+                        (merge (get-in entity [:images (:current-image entity)])))
 
                     (:background? entity)
                     (if (< (:x entity) (- (/ (g2d/texture! entity :get-region-width) 2)))
@@ -181,7 +158,10 @@
                           (update :x - (+ player-speed obstacle-speed))
                           (update :angle + barrel-rotation-speed)))
 
-                    :else entity)))))
+                    :else entity)))
+       (remove nil?)
+       vec
+       ))
 
 ;; Entities !-> Entities
 ;; render entities, returns the original entities
@@ -207,13 +187,55 @@
 ;; produce updated world state on key inputs
 ;; !!!
 (defn on-key-down [screen entities]
-  entities)
+  (condp = (:key screen)
+    (play-clj/key-code :dpad-up)
+    (->> entities
+         (map (fn [entity]
+                (if (and (:player? entity) (:can-jump? entity))
+                  (assoc entity :y-velocity player-max-y-velocity)
+                  entity))))
+    entities))
 
 ;; Screen Entities -> Entities
 ;; produce updated world state on collision of entities
 ;; !!!
 (defn on-begin-contact [screen entities]
   entities)
+
+
+;; the main game screen
+(play-clj/defscreen main-screen
+  :on-show on-show!                   ; Screen Entities -> Entities
+  :on-render on-render                ; Screen Entities -> Entities
+  :on-timer on-timer                  ; Screen Entities -> Entities
+  :on-key-down on-key-down            ; Screen Entities -> Entities
+  :on-begin-contact on-begin-contact  ; Screen Entities -> Entities
+  :on-resize on-resize)
+
+;; the UI overlay for the main game screen
+;; !!!
+(play-clj/defscreen ui-screen
+  :on-show
+  (fn [screen entities]
+    (play-clj/update! screen :camera (play-clj/orthographic) :renderer (play-clj/stage))
+    (merge (ui/label "0" (play-clj/color :black))
+           {:id :fps
+            :x 10
+            :y 10}))
+  :on-resize on-resize
+  :on-render
+  (fn [screen entities]
+    (->> (for [entity entities]
+           (case (:id entity)
+             :fps (doto entity (ui/label! :set-text (str (play-clj/graphics! :get-frames-per-second) "fps")))
+             entity))
+         (play-clj/render! screen))))
+
+(play-clj/defgame viking-village-vandalism-game
+  :on-create
+  (fn [this]
+    (play-clj/set-screen! this main-screen ui-screen)))
+
 
 ;; ===============================
 ;; Development time helpers:
