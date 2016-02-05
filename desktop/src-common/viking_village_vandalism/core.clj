@@ -168,6 +168,11 @@
 ;; ===============================
 ;; Development time helpers:
 
+(play-clj/defscreen blank-screen
+  :on-render
+  (fn [screen entities]
+    (play-clj/clear!)))
+
 ;; fall back to blank screen on errors
 (play-clj/set-screen-wrapper! (fn [screen screen-fn]
                                 (try (screen-fn)
@@ -177,14 +182,9 @@
 
 
 ;; use this to switch screens and retrigger on-show
-(declare blank-screen)
 (comment
   (play-clj/on-gl (play-clj/set-screen! viking-village-vandalism-game main-screen))
 
   (play-clj/on-gl (play-clj/set-screen! viking-village-vandalism-game blank-screen))
-  )
 
-(play-clj/defscreen blank-screen
-  :on-render
-  (fn [screen entities]
-    (play-clj/clear!)))
+  )
