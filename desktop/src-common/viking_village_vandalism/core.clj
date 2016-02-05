@@ -107,7 +107,8 @@
   (init-screen! screen)
   [(g2d/texture background-image)
    (merge (g2d/texture (get player-images :running))
-          {:player? true}
+          {:player? true
+           :images (reduce-kv #(assoc %1 %2 (g2d/texture %3)) {} player-images)}
           (map->Player {:dy            0
                         :health        initial-health
                         :score         0
@@ -133,10 +134,10 @@
 ;; !!!
 (defn update-entities [entities]
   (->> entities
-       (map (fn [entity]
+       (map (fn [{:keys [current-image] :as entity}]
               (cond (:player? entity)
                     (merge entity
-                           (g2d/texture (get player-images (:current-image entity))))
+                           (get-in entity [:images current-image]))
 
                     :else entity)))))
 
