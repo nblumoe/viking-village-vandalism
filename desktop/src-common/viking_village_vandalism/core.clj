@@ -10,9 +10,9 @@
 (def screen-width  800)
 (def screen-height 600)
 (def background-image "background.png")
-(def player-images {:running "player-run.png"
-                    :jumping "player-jump.png"
-                    :sliding "player-sliding.png"})
+(def player-animations {:running (map #(str "shieldmaiden/5x/run_" % ".png") (range 6))
+                        :jumping (map #(str "shieldmaiden/5x/jump_" % ".png") (range 6))})
+
 (def barrel-image "barrel.png")
 (def arrow-image  "arrow.png")
 (def gate-images {:intact "gate-intact.ong"
@@ -40,16 +40,16 @@
 ;; ===============================
 ;; Data Definitions:
 
-(defrecord Player [current-image dy health score])
-;; Player is (map->Player {:current-image Keyword :dy Number[0, screen-height] :health Natural :score Natural)
+(defrecord Player [current-animation dy health score])
+;; Player is (map->Player {:current-animation Keyword :dy Number[0, screen-height] :health Natural :score Natural)
 ;; interp. the player character with an image identifier for the current player action,
 ;;         the y offset from the floor, current health and score
-(map->Player {:current-image :running :dy  0 :health 3 :score 5})   ; just running
-(map->Player {:current-image :jumping :dy 57 :health 3 :score 15})  ; jumping
-(map->Player {:current-image :running :dy  0 :health 0 :score 15})  ; dead
+(map->Player {:current-animation :running :dy  0 :health 3 :score 5})   ; just running
+(map->Player {:current-animation :jumping :dy 57 :health 3 :score 15})  ; jumping
+(map->Player {:current-animation :running :dy  0 :health 0 :score 15})  ; dead
 
-(defn fn-for-player [{:keys [current-image dy health score] :as player}]
-  (... current-image dy health score))
+(defn fn-for-player [{:keys [current-animation dy health score] :as player}]
+  (... current-animation dy health score))
 
 (defrecord Obstacle [x angle type])
 ;; Obstacle is (Obstacle. Number[0, screen-width] Number Keyword)
@@ -85,17 +85,18 @@
   [(merge (g2d/texture background-image)
           {:background? true
            :x 0})
-   (merge (g2d/texture (get player-images :running))
+   (merge (g2d/texture (first (player-animations :running)))
           {:player? true
            :y-velocity 0
            :can-jump? true
            :x player-x
            :y floor-y
-           :images (reduce-kv #(assoc %1 %2 (g2d/texture %3)) {} player-images)}
+           :animations (reduce-kv #(assoc %1 %2 (g2d/animation 0.1 (map g2d/texture* %3)))
+                                  {} player-animations)}
           (map->Player {:dy            0
                         :health        initial-health
                         :score         0
-                        :current-image :running}))])
+                        :current-animation :running}))])
 
 ;; Screen !-> Screen
 ;; initialize the screen
@@ -113,13 +114,13 @@
 ;; update world state and render entities, produce updated entities
 (defn on-render [screen entities]
   (->> entities
-       update-entities
+       (update-entities screen)
        (render-entities! screen)))
 
 ;; Entities -> Entities
 ;; produce an updated world state
 ;; !!!
-(defn update-entities [entities]
+(defn update-entities [screen entities]
   (->> entities
        (map (fn [entity]
               (cond (:player? entity)
@@ -130,13 +131,13 @@
                                                  0
                                                  (+ % gravity)))
                           (assoc :can-jump? (<= (:y entity) floor-y))
-                          (update :current-image #(if (<= new-y floor-y)
-                                                    :running
-                                                    %))
-                          (merge (get-in entity [:images (:current-image entity)]))))
+                          (update :current-animation #(if (<= new-y floor-y)
+                                                        :running
+                                                        %))
+                          (merge (g2d/animation->texture screen (get-in entity [:animations (:current-animation entity)])))))
 
                     (:background? entity)
-                    (if (< (:x entity) (- (/ (g2d/texture! entity :get-region-width) 2)))
+                    (if (< (:x entity) (- (/ (g2d/texture! entity :get-region-width) 1.5)))
                       (assoc entity :x 0)
                       (update entity :x - player-speed))
 
@@ -164,7 +165,7 @@
     :spawn-obstacle
     (conj entities (merge (g2d/texture barrel-image)
                           {:x (play-clj/width screen)
-                           :t floor-y
+                           :y floor-y
                            :obstacle? true
                            :angle 0}))
 
@@ -181,7 +182,7 @@
                 (if (and (:player? entity) (:can-jump? entity))
                   (-> entity
                       (assoc :y-velocity player-max-y-velocity
-                             :current-image :jumping))
+                             :current-animation :jumping))
                   entity))))
     entities))
 
