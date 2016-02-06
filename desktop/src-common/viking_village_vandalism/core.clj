@@ -12,8 +12,8 @@
 (def background-image "background.png")
 (def player-animations {:running (map #(str "shieldmaiden/5x/run_" % ".png") (range 6))
                         :jumping (map #(str "shieldmaiden/5x/jump_" % ".png") (range 6))})
+(def barrel-animation (map #(format "obstacles/barrel/barrel_%03d.png" %) (range 11)))
 
-(def barrel-image "barrel.png")
 (def arrow-image  "arrow.png")
 (def gate-images {:intact "gate-intact.ong"
                   :broken "gate-broken.png"})
@@ -27,7 +27,6 @@
 (def arrow-y (* screen-height 2))
 (def obstacle-speed 5)
 (def obstacle-interval 1)
-(def barrel-rotation-speed 10)
 (def obstacle-destroy-x -100)
 
 (def player-x 50)
@@ -51,18 +50,17 @@
 (defn fn-for-player [{:keys [current-animation dy health score] :as player}]
   (... current-animation dy health score))
 
-(defrecord Obstacle [x angle type])
+(defrecord Obstacle [x type])
 ;; Obstacle is (Obstacle. Number[0, screen-width] Number Keyword)
 ;; interp. a barrel, arrow or gate hurting the player on collision
 ;;         - x is the position in screen coordinates along the x axis
-;;         - angle is the rotation in radians (only for barrels)
 ;;         - type is one of: [:barrel :arrow :gate]
-(map->Obstacle {:x 123 :angle (* 0.75 Math/PI) :type :barrel}) ; a rolling barrel
-(map->Obstacle {:x   0 :angle 0 :type :arrow})                 ; an arrow about to leave the scene
-(map->Obstacle {:x 342 :angle 0 :type :gate})                  ; a gate
+(map->Obstacle {:x 123 :type :barrel}) ; a rolling barrel
+(map->Obstacle {:x   0 :type :arrow})                 ; an arrow about to leave the scene
+(map->Obstacle {:x 342  :gate})                  ; a gate
 
-(defn fn-for-obstacle [{:keys [x angle type] :as obstacle}]
-  (... x angle type))
+(defn fn-for-obstacle [{:keys [x type] :as obstacle}]
+  (... x type))
 
 ;; ===============================
 ;; Function Definitions:
@@ -145,7 +143,7 @@
                     (when-not (< (:x entity) obstacle-destroy-x)
                       (-> entity
                           (update :x - (+ player-speed obstacle-speed))
-                          (update :angle + barrel-rotation-speed)))
+                          (merge (g2d/animation->texture screen (:animation entity)))))
 
                     :else entity)))
        (remove nil?)
@@ -163,9 +161,10 @@
 (defn on-timer [screen entities]
   (case (:id screen)
     :spawn-obstacle
-    (conj entities (merge (g2d/texture barrel-image)
+    (conj entities (merge (g2d/texture (first barrel-animation))
                           {:x (play-clj/width screen)
                            :y floor-y
+                           :animation (g2d/animation 0.1 (map g2d/texture* barrel-animation))
                            :obstacle? true
                            :angle 0}))
 

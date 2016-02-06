@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<spriter_data scml_version="1.0" generator="BrashMonkey Spriter" generator_version="r6">
+    <folder id="0">
+        <file id="0" name="barrel.png" width="100" height="100" pivot_x="0" pivot_y="1"/>
+        <file id="1" name="snow_trail_0.png" width="100" height="50" pivot_x="0" pivot_y="1"/>
+        <file id="2" name="snow_trail_2.png" width="100" height="50" pivot_x="0" pivot_y="1"/>
+    </folder>
+    <entity id="0" name="entity_000">
+        <animation id="0" name="NewAnimation" length="1000" interval="100">
+            <mainline>
+                <key id="0">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="0" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="0" z_index="2"/>
+                </key>
+                <key id="1" time="100">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="1" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="1" z_index="2"/>
+                </key>
+                <key id="2" time="200">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="2" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="2" z_index="2"/>
+                </key>
+                <key id="3" time="299">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="3" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="3" z_index="2"/>
+                </key>
+                <key id="4" time="399">
+                    <object_ref id="0" timeline="0" key="0" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="4" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="4" z_index="2"/>
+                </key>
+                <key id="5" time="501">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="5" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="5" z_index="2"/>
+                </key>
+                <key id="6" time="599">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="6" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="6" z_index="2"/>
+                </key>
+                <key id="7" time="701">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="7" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="7" z_index="2"/>
+                </key>
+                <key id="8" time="802">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="8" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="8" z_index="2"/>
+                </key>
+                <key id="9" time="899">
+                    <object_ref id="0" timeline="0" key="1" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="9" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="9" z_index="2"/>
+                </key>
+                <key id="10" time="1000">
+                    <object_ref id="0" timeline="0" key="2" z_index="0"/>
+                    <object_ref id="1" timeline="1" key="10" z_index="1"/>
+                    <object_ref id="2" timeline="2" key="10" z_index="2"/>
+                </key>
+            </mainline>
+            <timeline id="0" name="barrel">
+                <key id="0">
+                    <object folder="0" file="0" x="0.009901" y="-6" pivot_x="0.490099" pivot_y="0.5" angle="0"/>
+                </key>
+                <key id="1" time="501">
+                    <object folder="0" file="0" x="0.009901" y="-6" pivot_x="0.490099" pivot_y="0.5" angle="180"/>
+                </key>
+                <key id="2" time="1000">
+                    <object folder="0" file="0" x="0.009901" y="-6" pivot_x="0.490099" pivot_y="0.5" angle="359"/>
+                </key>
+            </timeline>
+            <timeline id="1" name="snow_trail_0">
+                <key id="0" spin="0">
+                    <object folder="0" file="1" x="-4.663212" y="4.145078"/>
+                </key>
+                <key id="1" time="100">
+                    <object folder="0" file="1" x="-4.663212" y="4.145078"/>
+                </key>
+                <key id="2" time="200" spin="-1">
+                    <object folder="0" file="1" x="-4.663212" y="4.145078" angle="1.856158" scale_x="1"/>
+                </key>
+                <key id="3" time="299">
+                    <object folder="0" file="1" x="-4.663212" y="4.145078" angle="359.464541" scale_x="1"/>
+                </key>
+                <key id="4" time="399">
+                    <object folder="0" file="1" x="-4.663212" y="4.145078" angle="2.385944" scale_x="1"/>
+                </key>
+                <key id="5" time="501" spin="-1">
+                    <object folder="0" file="1" x="-4.663212" y="4.145078" angle="2.984282" scale_x="1" scale_y="1"/>
+                </key>
+                <key id="6" time="599" spin="-1">
+                    <object folder="0" file="1" x="-4.663212" y="4.145078" angle="2.915322" scale_x="1" scale_y="1"/>
+                </key>
+                <key id="7" time="701">
+                    <object folder="0" file="1" x="-4.663212" y="4.145078" angle="356.571631" scale_x="1" scale_y="1"/>
+                </key>
+                <key id="8" time="802">
+                    <object folder="0" file="1" x="-4.663212" y="4.145078" angle="1.041627" scale_x="1" scale_y="1"/>
+                </key>
+                <key id="9" time="899" spin="-1">
+                    <object folder="0" file="1" x="-4.663212" y="4.145078" angle="1.606003" scale_x="1" scale_y="1"/>
+                </key>
+                <key id="10" time="1000">
+                    <object folder="0" file="1" x="-4.663212" y="4.145078" angle="357.09809" scale_y="1"/>
+                </key>
+            </timeline>
+            <timeline id="2" name="snow_trail_2">
+                <key id="0">
+                    <object folder="0" file="2" x="13.471503" y="5.181347"/>
+                </key>
+                <key id="1" time="100" spin="-1">
+                    <object folder="0" file="2" x="13.471503" y="5.181347" angle="1.056024" scale_x="1" scale_y="1"/>
+                </key>
+                <key id="2" time="200">
+                    <object folder="0" file="2" x="12.953368" y="7.253886" angle="356.391531"/>
+                </key>
+                <key id="3" time="299" spin="-1">
+                    <object folder="0" file="2" x="13.471503" y="5.181347"/>
+                </key>
+                <key id="4" time="399" spin="-1">
+                    <object folder="0" file="2" x="13.471503" y="5.181347" angle="358.143842" scale_y="1"/>
+                </key>
+                <key id="5" time="501">
+                    <object folder="0" file="2" x="15.025907" y="5.699482" angle="357.828688" scale_x="1"/>
+                </key>
+                <key id="6" time="599" spin="-1">
+                    <object folder="0" file="2" x="13.471503" y="5.181347" angle="1.57655" scale_x="1"/>
+                </key>
+                <key id="7" time="701">
+                    <object folder="0" file="2" x="13.471503" y="5.181347" angle="358.401463" scale_x="1" scale_y="1"/>
+                </key>
+                <key id="8" time="802" spin="-1">
+                    <object folder="0" file="2" x="13.471503" y="5.181347" angle="1.864785" scale_x="1" scale_y="1"/>
+                </key>
+                <key id="9" time="899" spin="-1">
+                    <object folder="0" file="2" x="13.471503" y="5.181347" angle="359.207943" scale_x="1"/>
+                </key>
+                <key id="10" time="1000">
+                    <object folder="0" file="2" x="13.471503" y="5.181347" angle="356.678524" scale_x="1" scale_y="1"/>
+                </key>
+            </timeline>
+        </animation>
+    </entity>
+</spriter_data>
