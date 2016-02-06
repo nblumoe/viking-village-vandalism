@@ -39,16 +39,16 @@
 ;; ===============================
 ;; Data Definitions:
 
-(defrecord Player [current-animation dy health score])
-;; Player is (map->Player {:current-animation Keyword :dy Number[0, screen-height] :health Natural :score Natural)
-;; interp. the player character with an image identifier for the current player action,
-;;         the y offset from the floor, current health and score
-(map->Player {:current-animation :running :dy  0 :health 3 :score 5})   ; just running
-(map->Player {:current-animation :jumping :dy 57 :health 3 :score 15})  ; jumping
-(map->Player {:current-animation :running :dy  0 :health 0 :score 15})  ; dead
+(defrecord Player [current-animation health score])
+;; Player is (map->Player {:current-animation Keyword :health Natural :score Natural)
+;; interp. the player character with an image identifier for the current player animation,
+;;         current health and score
+(map->Player {:current-animation :running :health 3 :score 5})   ; just running
+(map->Player {:current-animation :jumping :health 3 :score 15})  ; jumping
+(map->Player {:current-animation :running :health 0 :score 15})  ; dead
 
-(defn fn-for-player [{:keys [current-animation dy health score] :as player}]
-  (... current-animation dy health score))
+(defn fn-for-player [{:keys [current-animation health score] :as player}]
+  (... current-animation health score))
 
 (defrecord Obstacle [x type])
 ;; Obstacle is (Obstacle. Number[0, screen-width] Number Keyword)
@@ -91,8 +91,7 @@
            :y floor-y
            :animations (reduce-kv #(assoc %1 %2 (g2d/animation 0.1 (map g2d/texture* %3)))
                                   {} player-animations)}
-          (map->Player {:dy            0
-                        :health        initial-health
+          (map->Player {:health        initial-health
                         :score         0
                         :current-animation :running}))])
 
