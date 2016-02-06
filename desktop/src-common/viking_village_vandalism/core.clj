@@ -57,7 +57,7 @@
 ;;         - type is one of: [:barrel :arrow :gate]
 (map->Obstacle {:x 123 :type :barrel}) ; a rolling barrel
 (map->Obstacle {:x   0 :type :arrow})                 ; an arrow about to leave the scene
-(map->Obstacle {:x 342  :gate})                  ; a gate
+(map->Obstacle {:x 342 :type :gate})                  ; a gate
 
 (defn fn-for-obstacle [{:keys [x type] :as obstacle}]
   (... x type))
