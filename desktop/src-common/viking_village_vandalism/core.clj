@@ -69,7 +69,8 @@
          on-render update-entities render-entities!
          on-timer
          on-key-down
-         on-begin-contact)
+         on-begin-contact
+         ui-screen main-screen)
 
 (defn on-resize [screen entities]
   (play-clj/height! screen 600))
@@ -122,6 +123,8 @@
        (map (fn [entity]
               (cond (:player? entity)
                     (let [new-y (+ (:y entity) (:y-velocity entity))]
+                      (play-clj/screen! ui-screen :on-change-player :health (:health entity)
+                                        :score (:score entity))
                       (-> entity
                           (assoc :y (max new-y floor-y))
                           (update :y-velocity #(if (<= (:y entity) floor-y)
@@ -190,7 +193,6 @@
 (defn on-begin-contact [screen entities]
   entities)
 
-
 ;; the main game screen
 (play-clj/defscreen main-screen
   :on-show on-show!                   ; Screen Entities -> Entities
@@ -206,16 +208,34 @@
   :on-show
   (fn [screen entities]
     (play-clj/update! screen :camera (play-clj/orthographic) :renderer (play-clj/stage))
-    (merge (ui/label "0" (play-clj/color :black))
-           {:id :fps
-            :x 10
-            :y 10}))
+    [(merge (ui/label "" (play-clj/color :red))
+            {:id :health
+             :x (* 0.05 (play-clj/game :width))
+             :y (* 0.95 (play-clj/game :height))})
+     (merge (ui/label "" (play-clj/color :orange))
+            {:id :score
+             :x (* 0.95 (play-clj/game :width))
+             :y (* 0.95 (play-clj/game :height))})
+     (merge (ui/label "" (play-clj/color :black))
+            {:id :fps
+             :x (* 0.05 (play-clj/game :width))
+             :y (* 0.05 (play-clj/game :height))})])
   :on-resize on-resize
+  :on-change-player
+  (fn [{:keys [health score]} entities]
+    (->> (for [entity entities]
+           (case (:id entity)
+             :health (doto entity
+                       (ui/label! :set-text (str health)))
+             :score (doto entity
+                      (ui/label! :set-text (str score)))
+             entity))))
   :on-render
   (fn [screen entities]
     (->> (for [entity entities]
            (case (:id entity)
-             :fps (doto entity (ui/label! :set-text (str (play-clj/graphics! :get-frames-per-second) "fps")))
+             :fps (doto entity
+                    (ui/label! :set-text (str (play-clj/graphics! :get-frames-per-second) "fps")))
              entity))
          (play-clj/render! screen))))
 
@@ -223,7 +243,6 @@
   :on-create
   (fn [this]
     (play-clj/set-screen! this main-screen ui-screen)))
-
 
 ;; ===============================
 ;; Development time helpers:
